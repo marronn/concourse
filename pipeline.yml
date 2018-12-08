@@ -15,4 +15,4 @@ jobs:
   - get: hello
     trigger: true # Resourceに変更があれば自動でジョブを実行するかどうか
   - task: run-hello
-    file: ci/hello/hello.yml
+    file: hello/hello.yml

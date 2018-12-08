@@ -1,0 +1,29 @@
+---
+# Resourceの定義
+resources:
+# Git Resourceの定義
+- name: hello
+  type: git
+  source:
+    uri: https://github.com/marronn/concourse.git
+- name: result
+  type: git
+  source:
+    uri: git@gist.github.com:0fe9810a3b0e5bdf7ef9e30a56636913.git
+    private_key: {{github-private-key}}
+    branch: master
+
+jobs:
+- name: job-hello
+  public: true
+  plan:
+  - get: hello # パイプラインのGitをpull
+    trigger: true
+  - get: result # 出力結果のGitをpull (次に定義する)
+  - task: run-hello # findの結果をファイルに書き出すTask
+    file: hello/hello.yml
+  - task: commit-log # 出力結果ファイルをGitにコミットするTask
+    file: hello/commit-log.yml
+  - put: result # 出力結果のGitのpush
+    params:
+      repository: updated-result
